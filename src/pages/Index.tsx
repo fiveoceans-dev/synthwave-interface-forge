@@ -3,6 +3,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import HeroSection from '@/components/HeroSection';
 import DataPanels from '@/components/DataPanels';
+import TokenomicsSection from '@/components/TokenomicsSection';
+import RoadmapSection from '@/components/RoadmapSection';
+import MapSection from '@/components/MapSection';
 import TerminalSection from '@/components/TerminalSection';
 import Navigation from '@/components/Navigation';
 
@@ -35,6 +38,15 @@ const Index = () => {
 
       {/* Data Visualization Panels */}
       <DataPanels />
+
+      {/* Tokenomics Section */}
+      <TokenomicsSection />
+
+      {/* Roadmap Section */}
+      <RoadmapSection />
+
+      {/* Map Section */}
+      <MapSection />
 
       {/* Terminal Section */}
       <TerminalSection />
