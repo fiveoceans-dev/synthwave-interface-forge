@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 
 const TerminalSection = () => {
   const [terminalLines, setTerminalLines] = useState([
-    '> INITIALIZING NEURAL INTERFACE...',
-    '> LOADING CYBERPUNK PROTOCOLS...',
+    '> INITIALIZING NEXTMETAL INTERFACE...',
+    '> LOADING METAL PROCESSING PROTOCOLS...',
     '> ESTABLISHING SECURE CONNECTION...',
     '> SYSTEM READY FOR INPUT'
   ]);
@@ -18,9 +18,9 @@ const TerminalSection = () => {
       'AVAILABLE COMMANDS:',
       '  help     - Show this help message',
       '  status   - Display system status',
-      '  neural   - Access neural network',
-      '  hack     - Initialize hacking protocols',
-      '  matrix   - Enter the matrix',
+      '  metal    - Access metal processing network',
+      '  forge    - Initialize forging protocols',
+      '  alloy    - Analyze alloy composition',
       '  clear    - Clear terminal'
     ],
     status: [
@@ -30,24 +30,24 @@ const TerminalSection = () => {
       'NETWORK STATUS: CONNECTED',
       'SECURITY LEVEL: MAXIMUM'
     ],
-    neural: [
-      'ACCESSING NEURAL NETWORK...',
-      'SYNAPTIC CONNECTIONS: STABLE',
-      'CONSCIOUSNESS UPLOAD: 100%',
-      'NEURAL LINK ESTABLISHED'
+    metal: [
+      'ACCESSING METAL PROCESSING NETWORK...',
+      'THERMAL CONNECTIONS: STABLE',
+      'ALLOY COMPOSITION: OPTIMAL',
+      'METAL LINK ESTABLISHED'
     ],
-    hack: [
-      'INITIALIZING HACKING PROTOCOLS...',
-      'SCANNING TARGET SYSTEMS...',
-      'VULNERABILITIES DETECTED: 3',
-      'BREACH SUCCESSFUL',
+    forge: [
+      'INITIALIZING FORGING PROTOCOLS...',
+      'SCANNING TARGET MATERIALS...',
+      'TEMPERATURE ZONES: 3 ACTIVE',
+      'FORGE SEQUENCE INITIATED',
       'ACCESS GRANTED'
     ],
-    matrix: [
-      'ENTERING THE MATRIX...',
-      'REALITY.EXE HAS STOPPED WORKING',
-      'LOADING SIMULATION...',
-      'WELCOME TO THE MATRIX'
+    alloy: [
+      'ANALYZING ALLOY COMPOSITION...',
+      'SCANNING MOLECULAR STRUCTURE...',
+      'COMPOSITION: 85% STEEL, 15% TITANIUM',
+      'ANALYSIS COMPLETE'
     ]
   };
 
@@ -86,19 +86,19 @@ const TerminalSection = () => {
   return (
     <section className="py-20 px-4 relative z-10">
       <div className="container mx-auto max-w-4xl">
-        <h2 className="text-3xl font-cyber text-cyber-green text-center mb-12 glitch-text" data-text="NEURAL.TERMINAL">
-          NEURAL.TERMINAL
+        <h2 className="text-3xl font-cyber text-cyber-yellow text-center mb-12 glitch-text" data-text="METAL.TERMINAL">
+          METAL.TERMINAL
         </h2>
 
         <Card className="cyber-panel p-6">
           <div className="bg-cyber-black border border-cyber-blue/50 rounded p-4 h-96 overflow-y-auto font-mono text-sm">
             {terminalLines.map((line, index) => (
-              <div key={index} className="text-cyber-green mb-1">
+              <div key={index} className="text-cyber-yellow mb-1">
                 {line}
               </div>
             ))}
             <div className="flex items-center text-cyber-blue mt-2">
-              <span className="text-cyber-green">root@cybertech:~$</span>
+              <span className="text-cyber-yellow">root@nextmetal:~$</span>
               <form onSubmit={handleSubmit} className="flex-1 ml-2">
                 <input
                   type="text"

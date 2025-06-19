@@ -19,11 +19,11 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 border border-cyber-green cyber-border bg-cyber-green/10 flex items-center justify-center">
-              <div className="w-4 h-4 bg-cyber-green animate-glow-pulse" style={{clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'}} />
+            <div className="w-8 h-8 border border-cyber-yellow cyber-border bg-cyber-yellow/10 flex items-center justify-center">
+              <div className="w-4 h-4 bg-cyber-yellow animate-glow-pulse" style={{clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'}} />
             </div>
-            <span className="font-cyber text-xl text-cyber-green glitch-text" data-text="CYBERTECH">
-              CYBERTECH
+            <span className="font-cyber text-xl text-cyber-yellow glitch-text" data-text="NEXTMETAL">
+              NEXTMETAL
             </span>
           </div>
 
@@ -36,7 +36,7 @@ const Navigation = () => {
                 className={`
                   font-mono text-sm px-4 py-2 transition-all duration-300
                   ${activeSection === item.id 
-                    ? 'text-cyber-green bg-cyber-green/10 cyber-border' 
+                    ? 'text-cyber-yellow bg-cyber-yellow/10 cyber-border' 
                     : 'text-cyber-blue/70 hover:text-cyber-blue hover:bg-cyber-blue/10'
                   }
                 `}
@@ -49,8 +49,8 @@ const Navigation = () => {
 
           {/* Status Indicator */}
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-cyber-green rounded-full animate-pulse" />
-            <span className="text-xs text-cyber-green font-mono">ONLINE</span>
+            <div className="w-2 h-2 bg-cyber-yellow rounded-full animate-pulse" />
+            <span className="text-xs text-cyber-yellow font-mono">ONLINE</span>
           </div>
         </div>
       </div>

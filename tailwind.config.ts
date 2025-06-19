@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,15 +62,15 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Cyberpunk color palette
+				// NextMetal color palette - Yellow and Blue theme
 				cyber: {
 					black: '#0a0a0a',
 					dark: '#111111',
-					blue: '#00f5ff',
-					green: '#39ff14',
-					purple: '#bf00ff',
+					blue: '#00bfff',
+					yellow: '#ffd700',
+					'blue-bright': '#00d4ff',
+					'yellow-bright': '#ffff00',
 					red: '#ff073a',
-					yellow: '#ffff00',
 					orange: '#ff8c00',
 				}
 			},
@@ -99,10 +98,10 @@ export default {
 				},
 				'glow-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 5px #00f5ff, 0 0 10px #00f5ff, 0 0 15px #00f5ff'
+						boxShadow: '0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 15px #00bfff'
 					},
 					'50%': {
-						boxShadow: '0 0 10px #00f5ff, 0 0 20px #00f5ff, 0 0 30px #00f5ff'
+						boxShadow: '0 0 10px #00bfff, 0 0 20px #00bfff, 0 0 30px #00bfff'
 					}
 				},
 				'scan-line': {
