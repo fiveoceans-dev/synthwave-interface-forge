@@ -109,4 +109,8 @@
     color: #00bfff;
     z-index: -2;
   }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
 }
