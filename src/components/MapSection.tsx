@@ -1,156 +1,327 @@
 
 import { Card } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
 
 const MapSection = () => {
+  const [animationPhase, setAnimationPhase] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimationPhase(prev => (prev + 1) % 8);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   const regions = [
-    { name: 'NORTH.AMERICA', nodes: 12, status: 'ACTIVE', x: '25%', y: '30%' },
-    { name: 'EUROPE', nodes: 18, status: 'ACTIVE', x: '50%', y: '25%' },
-    { name: 'ASIA.PACIFIC', nodes: 24, status: 'ACTIVE', x: '75%', y: '35%' },
-    { name: 'SOUTH.AMERICA', nodes: 8, status: 'EXPANDING', x: '30%', y: '65%' },
-    { name: 'AFRICA', nodes: 6, status: 'DEVELOPING', x: '55%', y: '55%' },
-    { name: 'OCEANIA', nodes: 4, status: 'PLANNED', x: '80%', y: '70%' }
+    { name: 'NORTH.AMERICA', nodes: 12, status: 'ACTIVE', activity: 89, health: 95 },
+    { name: 'EUROPE', nodes: 18, status: 'ACTIVE', activity: 76, health: 92 },
+    { name: 'ASIA.PACIFIC', nodes: 24, status: 'ACTIVE', activity: 94, health: 88 },
+    { name: 'SOUTH.AMERICA', nodes: 8, status: 'EXPANDING', activity: 67, health: 85 },
+    { name: 'AFRICA', nodes: 6, status: 'DEVELOPING', activity: 45, health: 78 },
+    { name: 'OCEANIA', nodes: 4, status: 'PLANNED', activity: 23, health: 65 }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE': return 'bg-cyber-yellow';
-      case 'EXPANDING': return 'bg-cyber-blue';
-      case 'DEVELOPING': return 'bg-cyber-blue/70';
-      default: return 'bg-cyber-blue/40';
-    }
+  const systemMetrics = [
+    { name: 'LATENCY', value: 12, unit: 'ms', max: 50 },
+    { name: 'BANDWIDTH', value: 2.4, unit: 'K TPS', max: 5 },
+    { name: 'TRUST.LVL', value: 97, unit: '%', max: 100 },
+    { name: 'NODE.REP', value: 89, unit: '%', max: 100 }
+  ];
+
+  const CircularRing = ({ value, max, size = 120, strokeWidth = 8, children }: any) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const strokeDasharray = circumference;
+    const strokeDashoffset = circumference - (value / max) * circumference;
+
+    return (
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="transform -rotate-90">
+          {/* Background ring */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="rgba(0, 191, 255, 0.2)"
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
+          {/* Progress ring */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="url(#ringGradient)"
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeDasharray={strokeDasharray}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            className="transition-all duration-1000"
+          />
+          {/* Segmented markers */}
+          {[...Array(12)].map((_, i) => (
+            <circle
+              key={i}
+              cx={size / 2 + radius * Math.cos((i * 30 - 90) * Math.PI / 180)}
+              cy={size / 2 + radius * Math.sin((i * 30 - 90) * Math.PI / 180)}
+              r="2"
+              fill={i <= (value / max) * 12 ? "#ffd700" : "rgba(0, 191, 255, 0.3)"}
+            />
+          ))}
+          <defs>
+            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#ffd700" />
+              <stop offset="100%" stopColor="#00bfff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+        </div>
+      </div>
+    );
   };
 
   return (
-    <section className="py-20 px-4 relative z-10">
+    <section className="py-20 px-4 relative z-10 overflow-hidden">
       <div className="container mx-auto">
         <h2 className="text-3xl font-cyber text-cyber-yellow text-center mb-12 glitch-text" data-text="METAL.NETWORK">
           METAL.NETWORK
         </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* World Map Visualization */}
-          <Card className="cyber-panel p-6 col-span-2 relative overflow-hidden">
-            {/* Corner clips */}
-            <div className="absolute top-0 left-0 w-12 h-12 border-l-2 border-t-2 border-cyber-yellow"
-                 style={{clipPath: 'polygon(0 0, 80% 0, 100% 20%, 100% 100%, 0 100%)'}} />
-            <div className="absolute top-0 right-0 w-12 h-12 border-r-2 border-t-2 border-cyber-blue"
-                 style={{clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0 100%, 0 20%)'}} />
-            
-            {/* Tab label */}
-            <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-yellow px-4 py-1"
-                 style={{clipPath: 'polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%)'}}>
-              <span className="text-xs font-mono text-cyber-yellow">GLOBAL.NETWORK</span>
-            </div>
-
-            <h3 className="text-cyber-yellow font-mono text-lg mb-6 mt-4">PROCESSING.NODES</h3>
-            
-            {/* Map container */}
-            <div className="relative h-64 bg-cyber-black border border-cyber-blue/30 overflow-hidden">
-              {/* Grid overlay */}
-              <div className="absolute inset-0 opacity-20"
-                   style={{
-                     backgroundImage: `
-                       linear-gradient(rgba(0, 191, 255, 0.3) 1px, transparent 1px),
-                       linear-gradient(90deg, rgba(0, 191, 255, 0.3) 1px, transparent 1px)
-                     `,
-                     backgroundSize: '20px 20px'
-                   }} />
-              
-              {/* Scanning lines */}
-              <div className="absolute inset-0">
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-cyber-blue to-transparent animate-scan-line opacity-60" />
-                <div className="w-px h-full bg-gradient-to-b from-transparent via-cyber-yellow to-transparent animate-pulse absolute left-1/3" />
-                <div className="w-px h-full bg-gradient-to-b from-transparent via-cyber-blue to-transparent animate-pulse absolute right-1/3" />
-              </div>
-
-              {/* Region nodes */}
-              {regions.map((region, index) => (
-                <div
-                  key={region.name}
-                  className="absolute transform -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: region.x, top: region.y }}
-                >
-                  {/* Node pulse */}
-                  <div className={`w-4 h-4 ${getStatusColor(region.status)} rounded-full animate-pulse`} />
-                  <div className={`absolute inset-0 w-4 h-4 ${getStatusColor(region.status)} rounded-full animate-ping opacity-30`} />
-                  
-                  {/* Connection lines */}
-                  {index < regions.length - 1 && (
-                    <svg className="absolute top-2 left-2 w-32 h-16 pointer-events-none">
-                      <path
-                        d="M0,0 Q16,8 32,0"
-                        stroke="rgba(0, 191, 255, 0.4)"
-                        strokeWidth="1"
-                        fill="none"
-                        strokeDasharray="2,2"
-                      />
-                    </svg>
-                  )}
-                </div>
-              ))}
-
-              {/* Data streams */}
-              <div className="absolute bottom-2 left-2 right-2 flex justify-between text-xs font-mono">
-                <span className="text-cyber-yellow">ACTIVE.NODES: 72</span>
-                <span className="text-cyber-blue">NETWORK.STATUS: OPTIMAL</span>
-              </div>
-            </div>
-
-            {/* Segmented borders */}
-            <div className="absolute left-0 top-1/3 w-1 h-12 bg-cyber-yellow opacity-60"
-                 style={{clipPath: 'polygon(0 0, 100% 25%, 100% 75%, 0 100%)'}} />
-            <div className="absolute right-0 bottom-1/3 w-1 h-12 bg-cyber-blue opacity-60"
-                 style={{clipPath: 'polygon(0 25%, 100% 0, 100% 100%, 0 75%)'}} />
-          </Card>
-
-          {/* Network Status */}
-          <div className="space-y-4">
-            <Card className="cyber-panel p-4 relative">
+        <div className="grid grid-cols-12 gap-4 h-[600px]">
+          {/* Circuit Sidebar - Left Panel */}
+          <div className="col-span-2 space-y-2">
+            <Card className="cyber-panel p-4 h-full relative overflow-hidden">
               {/* Tab */}
-              <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-blue px-3 py-1"
+              <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-yellow px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
-                <span className="text-xs font-mono text-cyber-blue">STATUS</span>
+                <span className="text-xs font-mono text-cyber-yellow">CIRCUIT.MAP</span>
               </div>
 
-              <h4 className="text-cyber-yellow font-mono text-sm mb-3 mt-2">NETWORK.METRICS</h4>
-              <div className="space-y-2 text-xs font-mono">
-                <div className="flex justify-between">
-                  <span className="text-cyber-blue">UPTIME:</span>
-                  <span className="text-cyber-yellow">99.97%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-cyber-blue">LATENCY:</span>
-                  <span className="text-cyber-yellow">12ms</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-cyber-blue">THROUGHPUT:</span>
-                  <span className="text-cyber-yellow">2.4K TPS</span>
+              <div className="mt-4 space-y-3">
+                {/* Circuit pattern */}
+                {regions.map((region, index) => (
+                  <div key={region.name} className="flex items-center space-x-2">
+                    <div className={`w-3 h-3 border-2 ${
+                      region.status === 'ACTIVE' ? 'border-cyber-yellow bg-cyber-yellow/20' :
+                      region.status === 'EXPANDING' ? 'border-cyber-blue bg-cyber-blue/20' :
+                      'border-cyber-blue/50 bg-transparent'
+                    } ${animationPhase === index ? 'animate-pulse' : ''}`}
+                         style={{clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'}} />
+                    
+                    {/* Circuit lines */}
+                    <div className="flex-1 h-px bg-gradient-to-r from-cyber-blue to-transparent" />
+                    <div className="w-2 h-2 bg-cyber-yellow rounded-full opacity-60" />
+                  </div>
+                ))}
+
+                {/* Status LEDs */}
+                <div className="mt-6 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-cyber-blue">PWR</span>
+                    <div className="w-2 h-2 bg-cyber-yellow rounded-full animate-pulse" />
+                  </div>
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-cyber-blue">NET</span>
+                    <div className="w-2 h-2 bg-cyber-blue rounded-full" />
+                  </div>
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-cyber-blue">SYS</span>
+                    <div className="w-2 h-2 bg-cyber-yellow rounded-full animate-pulse" />
+                  </div>
                 </div>
               </div>
             </Card>
+          </div>
 
-            {regions.map((region, index) => (
-              <Card key={region.name} className="cyber-panel p-4 relative">
-                {/* Asymmetric border */}
-                <div className="absolute inset-0 border border-cyber-blue/20 m-0.5"
-                     style={{clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)'}} />
-                
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    <div className={`w-2 h-2 ${getStatusColor(region.status)} rounded-full`} />
-                    <span className="text-cyber-blue font-mono text-xs">{region.name}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-cyber-yellow font-mono text-xs">{region.nodes} NODES</div>
-                    <div className="text-cyber-blue/70 font-mono text-xs">{region.status}</div>
-                  </div>
+          {/* Main Network Visualization */}
+          <div className="col-span-7 space-y-4">
+            {/* Top circular data rings */}
+            <div className="grid grid-cols-2 gap-4 h-48">
+              <Card className="cyber-panel p-4 relative overflow-hidden">
+                <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-blue px-3 py-1"
+                     style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
+                  <span className="text-xs font-mono text-cyber-blue">NODE.ACTIVITY</span>
                 </div>
 
-                {/* Accent overlay */}
-                <div className="absolute top-1 right-2 w-6 h-0.5 bg-cyber-yellow opacity-50" />
+                <div className="flex items-center justify-center h-full">
+                  <CircularRing value={72} max={100} size={140}>
+                    <div className="text-center">
+                      <div className="text-2xl font-cyber text-cyber-yellow">72</div>
+                      <div className="text-xs text-cyber-blue">NODES</div>
+                    </div>
+                  </CircularRing>
+                </div>
               </Card>
-            ))}
+
+              <Card className="cyber-panel p-4 relative overflow-hidden">
+                <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-yellow px-3 py-1"
+                     style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
+                  <span className="text-xs font-mono text-cyber-yellow">SIGNAL.STRENGTH</span>
+                </div>
+
+                <div className="flex items-center justify-center h-full">
+                  <CircularRing value={94} max={100} size={140}>
+                    <div className="text-center">
+                      <div className="text-2xl font-cyber text-cyber-blue">94%</div>
+                      <div className="text-xs text-cyber-blue">SIGNAL</div>
+                    </div>
+                  </CircularRing>
+                </div>
+              </Card>
+            </div>
+
+            {/* Grid Matrix with Dot Dispersion */}
+            <Card className="cyber-panel p-6 h-80 relative overflow-hidden">
+              <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-yellow px-3 py-1"
+                   style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
+                <span className="text-xs font-mono text-cyber-yellow">NETWORK.PROPAGATION</span>
+              </div>
+
+              <div className="relative h-full mt-4">
+                {/* Grid background */}
+                <div className="absolute inset-0 opacity-20"
+                     style={{
+                       backgroundImage: `
+                         linear-gradient(rgba(0, 191, 255, 0.5) 1px, transparent 1px),
+                         linear-gradient(90deg, rgba(0, 191, 255, 0.5) 1px, transparent 1px)
+                       `,
+                       backgroundSize: '20px 20px'
+                     }} />
+
+                {/* Animated data points */}
+                {[...Array(50)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      backgroundColor: Math.random() > 0.5 ? '#ffd700' : '#00bfff',
+                      animationDelay: `${Math.random() * 2}s`
+                    }}
+                  >
+                    <div className="w-full h-full rounded-full animate-ping opacity-75" />
+                  </div>
+                ))}
+
+                {/* Propagation waves */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-32 h-32 border border-cyber-yellow rounded-full animate-ping opacity-30" />
+                  <div className="absolute w-24 h-24 border border-cyber-blue rounded-full animate-ping opacity-50" 
+                       style={{ animationDelay: '0.5s' }} />
+                  <div className="absolute w-16 h-16 border border-cyber-yellow rounded-full animate-ping opacity-70" 
+                       style={{ animationDelay: '1s' }} />
+                </div>
+              </div>
+            </Card>
           </div>
+
+          {/* Right Control Panel */}
+          <div className="col-span-3 space-y-4">
+            {/* System metrics with sliders */}
+            <Card className="cyber-panel p-4 relative overflow-hidden">
+              <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-blue px-3 py-1"
+                   style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
+                <span className="text-xs font-mono text-cyber-blue">SYS.CONTROL</span>
+              </div>
+
+              <div className="mt-4 space-y-4">
+                {systemMetrics.map((metric, index) => (
+                  <div key={metric.name} className="space-y-2">
+                    <div className="flex justify-between text-xs font-mono">
+                      <span className="text-cyber-blue">{metric.name}</span>
+                      <span className="text-cyber-yellow">{metric.value}{metric.unit}</span>
+                    </div>
+                    
+                    {/* Slider track */}
+                    <div className="relative h-6 bg-cyber-black border border-cyber-blue/30">
+                      <div 
+                        className="h-full bg-gradient-to-r from-cyber-yellow to-cyber-blue transition-all duration-1000"
+                        style={{ width: `${(metric.value / metric.max) * 100}%` }}
+                      />
+                      
+                      {/* Slider handle */}
+                      <div 
+                        className="absolute top-0 w-1 h-6 bg-cyber-yellow shadow-lg shadow-cyber-yellow/50"
+                        style={{ left: `${(metric.value / metric.max) * 100}%` }}
+                      />
+                      
+                      {/* Tick marks */}
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="absolute top-0 w-px h-6 bg-cyber-blue/50"
+                          style={{ left: `${(i * 25)}%` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Connection health ring */}
+            <Card className="cyber-panel p-4 relative overflow-hidden">
+              <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-yellow px-3 py-1"
+                   style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
+                <span className="text-xs font-mono text-cyber-yellow">HEALTH.MON</span>
+              </div>
+
+              <div className="flex items-center justify-center mt-4">
+                <CircularRing value={89} max={100} size={120}>
+                  <div className="text-center">
+                    <div className="text-xl font-cyber text-cyber-yellow">89%</div>
+                    <div className="text-xs text-cyber-blue">HEALTH</div>
+                  </div>
+                </CircularRing>
+              </div>
+            </Card>
+
+            {/* Network status indicators */}
+            <Card className="cyber-panel p-4 relative overflow-hidden">
+              <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-blue px-3 py-1"
+                   style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
+                <span className="text-xs font-mono text-cyber-blue">NET.STATUS</span>
+              </div>
+
+              <div className="mt-4 space-y-2 text-xs font-mono">
+                <div className="flex justify-between items-center">
+                  <span className="text-cyber-blue">UPTIME</span>
+                  <span className="text-cyber-yellow">99.97%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-cyber-blue">PEERS</span>
+                  <span className="text-cyber-yellow">2,847</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-cyber-blue">BLOCKS</span>
+                  <span className="text-cyber-yellow">1,234,567</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-cyber-blue">TXN/S</span>
+                  <span className="text-cyber-yellow">2.4K</span>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Bottom frame with timestamps and reference points */}
+        <div className="mt-8 relative">
+          <div className="flex justify-between items-center text-xs font-mono text-cyber-blue/70">
+            <span>TIMESTAMP: 2087.12.19.14:32:07</span>
+            <span>SECTOR: METAL.NET.CORE</span>
+            <span>GRID.REF: 0xFF4A2B</span>
+          </div>
+          
+          {/* Decorative circuit notches */}
+          <div className="absolute -top-2 left-0 w-8 h-1 bg-cyber-yellow opacity-60" />
+          <div className="absolute -top-2 right-0 w-8 h-1 bg-cyber-blue opacity-60" />
+          <div className="absolute -top-1 left-12 w-4 h-px bg-cyber-yellow opacity-40" />
+          <div className="absolute -top-1 right-12 w-4 h-px bg-cyber-blue opacity-40" />
         </div>
       </div>
     </section>
