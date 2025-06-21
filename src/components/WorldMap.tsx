@@ -2,6 +2,15 @@
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default markers in React-Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const WorldMap = () => {
   const [nodes, setNodes] = useState([
@@ -38,7 +47,7 @@ const WorldMap = () => {
   return (
     <div className="h-full w-full relative">
       <MapContainer
-        center={[20, 0] as [number, number]}
+        center={[20, 0]}
         zoom={2}
         style={{ height: '100%', width: '100%', backgroundColor: '#0a0a0a' }}
         attributionControl={false}
@@ -55,7 +64,7 @@ const WorldMap = () => {
           return (
             <CircleMarker
               key={node.id}
-              center={[node.lat, node.lng] as [number, number]}
+              center={[node.lat, node.lng]}
               pathOptions={{
                 color: color,
                 fillColor: color,
