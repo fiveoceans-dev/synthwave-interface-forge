@@ -1,9 +1,12 @@
-
 import { Card } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Icon } from '@blueprintjs/core';
 
 const RoadmapSection = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
+  const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
+  const [expandedPhase, setExpandedPhase] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -17,49 +20,57 @@ const RoadmapSection = () => {
       phase: 'PHASE.01',
       title: 'FOUNDATION',
       status: 'COMPLETE',
-      icon: '🚀',
+      icon: 'rocket-slant',
+      progress: 100,
       items: [
         'Smart Contract Development',
         'Security Audit & Testing',
         'Website & Branding Launch',
         'Community Building'
-      ]
+      ],
+      details: 'Complete blockchain infrastructure with audited smart contracts and initial community of 10K+ members.'
     },
     {
       phase: 'PHASE.02', 
       title: 'EXPANSION',
       status: 'ACTIVE',
-      icon: '⚡',
+      icon: 'flash',
+      progress: 75,
       items: [
         'DEX Listing & Liquidity',
         'Marketing Campaign',
         'Partnership Network',
         'Staking Platform'
-      ]
+      ],
+      details: 'Active expansion phase focusing on liquidity provision and strategic partnerships.'
     },
     {
       phase: 'PHASE.03',
       title: 'INTEGRATION',
       status: 'PENDING',
-      icon: '🛠',
+      icon: 'build',
+      progress: 25,
       items: [
         'CEX Listings',
         'Mobile App Development',
         'Cross-chain Bridge',
         'NFT Marketplace'
-      ]
+      ],
+      details: 'Integration of cross-chain capabilities and mobile accessibility for broader adoption.'
     },
     {
       phase: 'PHASE.04',
       title: 'ECOSYSTEM',
       status: 'FUTURE',
-      icon: '🌐',
+      icon: 'globe-network',
+      progress: 0,
       items: [
         'DAO Governance',
         'Metal Processing DeFi',
         'Industrial Partnerships',
         'Global Expansion'
-      ]
+      ],
+      details: 'Full ecosystem deployment with DAO governance and industrial metal processing integration.'
     }
   ];
 
@@ -113,23 +124,36 @@ const RoadmapSection = () => {
           className="animate-pulse"
         />
 
-        {/* Milestone nodes */}
+        {/* Interactive milestone nodes */}
         {roadmapData.map((milestone, index) => {
           const x = 50 + (index * 175);
-          const isActive = index <= 1; // First two phases are active/complete
+          const isActive = index <= 1;
+          const isSelected = selectedPhase === index;
           
           return (
-            <g key={index}>
-              {/* Node circle */}
+            <g key={index} className="cursor-pointer" onClick={() => setSelectedPhase(isSelected ? null : index)}>
+              {/* Enhanced node circle */}
               <circle
                 cx={x}
                 cy="50"
-                r="12"
+                r={isSelected ? "16" : "12"}
                 fill={isActive ? "#ffd700" : "rgba(0,191,255,0.3)"}
-                stroke={isActive ? "#00bfff" : "#ffd700"}
+                stroke={isSelected ? "#fff" : (isActive ? "#00bfff" : "#ffd700")}
                 strokeWidth="2"
                 filter="url(#timelineGlow)"
                 className={isActive ? "animate-pulse" : ""}
+              />
+              
+              {/* Progress ring */}
+              <circle
+                cx={x}
+                cy="50"
+                r="10"
+                fill="none"
+                stroke="#ffd700"
+                strokeWidth="2"
+                strokeDasharray={`${milestone.progress * 0.628} 62.8`}
+                transform={`rotate(-90 ${x} 50)`}
               />
               
               {/* Inner node */}
@@ -141,17 +165,6 @@ const RoadmapSection = () => {
                 className={isActive ? "animate-ping" : ""}
                 style={{ animationDelay: `${index * 0.5}s` }}
               />
-              
-              {/* Icon */}
-              <text
-                x={x}
-                y="35"
-                textAnchor="middle"
-                fontSize="16"
-                className="pointer-events-none"
-              >
-                {milestone.icon}
-              </text>
               
               {/* Phase label */}
               <text
@@ -192,12 +205,42 @@ const RoadmapSection = () => {
           METAL.ROADMAP
         </h2>
 
-        {/* Animated Timeline */}
+        {/* Interactive Timeline */}
         <TimelineSVG />
+
+        {selectedPhase !== null && (
+          <Card className="cyber-panel p-6 mb-8 border-cyber-yellow">
+            <div className="flex items-center space-x-4 mb-4">
+              <Icon icon={roadmapData[selectedPhase].icon as any} size={24} className="text-cyber-yellow" />
+              <div>
+                <h3 className="text-cyber-yellow font-cyber text-xl">{roadmapData[selectedPhase].title}</h3>
+                <p className="text-cyber-blue font-mono text-sm">{roadmapData[selectedPhase].details}</p>
+              </div>
+              <div className="ml-auto">
+                <div className="text-cyber-yellow font-mono text-sm">Progress: {roadmapData[selectedPhase].progress}%</div>
+                <div className="w-32 h-2 bg-cyber-dark border border-cyber-blue mt-1">
+                  <div 
+                    className="h-full bg-gradient-to-r from-cyber-yellow to-cyber-blue"
+                    style={{ width: `${roadmapData[selectedPhase].progress}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {roadmapData.map((phase, index) => (
-            <Card key={phase.phase} className="cyber-panel cyber-border p-6 relative overflow-hidden hover:ring ring-cyan-400/20 transition-all duration-300">
+            <Card 
+              key={phase.phase} 
+              className={`cyber-panel cyber-border p-6 relative overflow-hidden hover:ring ring-cyan-400/20 transition-all duration-300 cursor-pointer ${
+                selectedPhase === index ? 'ring ring-cyan-400/40' : ''
+              }`}
+              onClick={() => {
+                setSelectedPhase(selectedPhase === index ? null : index);
+                setExpandedPhase(expandedPhase === index ? null : index);
+              }}
+            >
               {/* Enhanced corner clips */}
               <div className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-cyber-yellow"
                    style={{clipPath: 'polygon(0 0, 70% 0, 100% 30%, 100% 100%, 0 100%)'}} />
@@ -213,7 +256,7 @@ const RoadmapSection = () => {
               <div className="mt-4">
                 {/* Icon and title */}
                 <div className="flex items-center justify-center mb-3">
-                  <span className="text-2xl mr-2">{phase.icon}</span>
+                  <Icon icon={phase.icon as any} size={24} className="text-cyber-yellow mr-2" />
                   <h3 className="text-cyber-yellow font-cyber text-lg tracking-widest">{phase.title}</h3>
                 </div>
                 
@@ -222,13 +265,27 @@ const RoadmapSection = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {phase.items.map((item, itemIndex) => (
+                  {phase.items.slice(0, expandedPhase === index ? phase.items.length : 2).map((item, itemIndex) => (
                     <div key={itemIndex} className="flex items-start space-x-2">
                       <div className="w-2 h-2 mt-2 bg-cyber-blue"
                            style={{clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'}} />
                       <span className="text-cyber-blue/80 text-sm font-mono leading-relaxed">{item}</span>
                     </div>
                   ))}
+                  
+                  {phase.items.length > 2 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-cyber-yellow hover:text-cyber-yellow/80 p-0 h-auto font-mono text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedPhase(expandedPhase === index ? null : index);
+                      }}
+                    >
+                      {expandedPhase === index ? 'Show Less' : `+${phase.items.length - 2} More`}
+                    </Button>
+                  )}
                 </div>
               </div>
 

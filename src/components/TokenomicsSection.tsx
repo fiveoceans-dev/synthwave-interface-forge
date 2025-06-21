@@ -1,9 +1,12 @@
-
 import { Card } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Icon } from '@blueprintjs/core';
 
 const TokenomicsSection = () => {
   const [animationPhase, setAnimationPhase] = useState(0);
+  const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'allocation' | 'timeline'>('allocation');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -13,12 +16,54 @@ const TokenomicsSection = () => {
   }, []);
 
   const tokenData = [
-    { label: 'LIQUIDITY.POOL', value: '400,000,000', percent: 40, color: '#ffd700' },
-    { label: 'DEVELOPMENT', value: '200,000,000', percent: 20, color: '#00bfff' },
-    { label: 'MARKETING', value: '150,000,000', percent: 15, color: '#ffd700' },
-    { label: 'TEAM.RESERVE', value: '100,000,000', percent: 10, color: '#00bfff' },
-    { label: 'PARTNERSHIPS', value: '100,000,000', percent: 10, color: '#ffd700' },
-    { label: 'AIRDROPS', value: '50,000,000', percent: 5, color: '#00bfff' }
+    { 
+      label: 'LIQUIDITY.POOL', 
+      value: '400,000,000', 
+      percent: 40, 
+      color: '#ffd700',
+      icon: 'tank',
+      description: 'Primary liquidity reserves for trading pairs'
+    },
+    { 
+      label: 'DEVELOPMENT', 
+      value: '200,000,000', 
+      percent: 20, 
+      color: '#00bfff',
+      icon: 'code',
+      description: 'Core development and infrastructure'
+    },
+    { 
+      label: 'MARKETING', 
+      value: '150,000,000', 
+      percent: 15, 
+      color: '#ffd700',
+      icon: 'megaphone',
+      description: 'Community growth and brand awareness'
+    },
+    { 
+      label: 'TEAM.RESERVE', 
+      value: '100,000,000', 
+      percent: 10, 
+      color: '#00bfff',
+      icon: 'people',
+      description: 'Team allocation with vesting schedule'
+    },
+    { 
+      label: 'PARTNERSHIPS', 
+      value: '100,000,000', 
+      percent: 10, 
+      color: '#ffd700',
+      icon: 'link',
+      description: 'Strategic partnerships and integrations'
+    },
+    { 
+      label: 'AIRDROPS', 
+      value: '50,000,000', 
+      percent: 5, 
+      color: '#00bfff',
+      icon: 'send-message',
+      description: 'Community rewards and incentives'
+    }
   ];
 
   const AnimatedPieChart = () => {
@@ -62,20 +107,24 @@ const TokenomicsSection = () => {
             
             cumulativePercent += segment.percent;
             
+            const isSelected = selectedSegment === index;
+            const scale = isSelected ? 1.1 : 1 + 0.05 * Math.sin((animationPhase + index * 60) * Math.PI / 180);
+            
             return (
               <g key={index}>
                 <path
                   d={pathData}
                   fill={segment.color}
-                  fillOpacity="0.7"
+                  fillOpacity={isSelected ? "0.9" : "0.7"}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth="1"
                   filter="url(#glow)"
-                  className="hover:fill-opacity-90 transition-all duration-300"
+                  className="hover:fill-opacity-90 transition-all duration-300 cursor-pointer"
                   style={{
-                    transform: `scale(${1 + 0.05 * Math.sin((animationPhase + index * 60) * Math.PI / 180)})`,
+                    transform: `scale(${scale})`,
                     transformOrigin: '100px 100px'
                   }}
+                  onClick={() => setSelectedSegment(selectedSegment === index ? null : index)}
                 />
                 
                 {/* Segment labels */}
@@ -115,6 +164,25 @@ const TokenomicsSection = () => {
           METAL.TOKENOMICS
         </h2>
 
+        <div className="mb-8 flex justify-center space-x-4">
+          <Button
+            variant={viewMode === 'allocation' ? 'default' : 'outline'}
+            onClick={() => setViewMode('allocation')}
+            className="font-mono"
+          >
+            <Icon icon="pie-chart" className="mr-2" />
+            ALLOCATION
+          </Button>
+          <Button
+            variant={viewMode === 'timeline' ? 'default' : 'outline'}
+            onClick={() => setViewMode('timeline')}
+            className="font-mono"
+          >
+            <Icon icon="timeline-events" className="mr-2" />
+            TIMELINE
+          </Button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Animated Token Distribution Chart */}
           <div className="relative">
@@ -135,6 +203,16 @@ const TokenomicsSection = () => {
               
               <AnimatedPieChart />
 
+              {selectedSegment !== null && (
+                <div className="mt-4 p-4 bg-cyber-black/50 border border-cyber-blue rounded">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Icon icon={tokenData[selectedSegment].icon as any} className="text-cyber-yellow" />
+                    <span className="text-cyber-yellow font-mono text-sm">{tokenData[selectedSegment].label}</span>
+                  </div>
+                  <p className="text-cyber-blue text-xs font-mono">{tokenData[selectedSegment].description}</p>
+                </div>
+              )}
+
               {/* Decorative elements */}
               <div className="absolute top-1/2 left-0 w-2 h-8 bg-cyber-yellow opacity-50" 
                    style={{clipPath: 'polygon(0 0, 100% 25%, 100% 75%, 0 100%)'}} />
@@ -146,13 +224,21 @@ const TokenomicsSection = () => {
           {/* Token Details with enhanced styling */}
           <div className="space-y-4">
             {tokenData.map((item, index) => (
-              <Card key={item.label} className="cyber-panel cyber-border p-4 relative hover:ring ring-cyan-400/20 transition-all duration-300">
+              <Card 
+                key={item.label} 
+                className={`cyber-panel cyber-border p-4 relative hover:ring ring-cyan-400/20 transition-all duration-300 cursor-pointer ${
+                  selectedSegment === index ? 'ring ring-cyan-400/40' : ''
+                }`}
+                onClick={() => setSelectedSegment(selectedSegment === index ? null : index)}
+              >
+                {/* Enhanced corner clips */}
                 <div className="absolute inset-0 border border-cyber-blue/30 m-1"
                      style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}} />
                 
                 <div className="flex justify-between items-center relative z-10">
                   <div className="flex items-center space-x-3">
                     <div className="w-4 h-4 rounded-full" style={{backgroundColor: item.color}} />
+                    <Icon icon={item.icon as any} className="text-cyber-blue" />
                     <span className="text-cyber-blue font-mono text-sm tracking-wider">{item.label}</span>
                   </div>
                   <div className="text-right">
