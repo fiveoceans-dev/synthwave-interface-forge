@@ -1,6 +1,6 @@
+
 import { Card } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
-import WorldMap from './WorldMap';
 
 const MapSection = () => {
   const [animationPhase, setAnimationPhase] = useState(0);
@@ -136,7 +136,7 @@ const MapSection = () => {
             </Card>
           </div>
 
-          {/* Main Network Visualization with World Map */}
+          {/* Main Network Visualization */}
           <div className="col-span-7 space-y-4">
             {/* Top circular data rings */}
             <div className="grid grid-cols-2 gap-4 h-48">
@@ -173,15 +173,48 @@ const MapSection = () => {
               </Card>
             </div>
 
-            {/* World Map replacing Grid Matrix */}
+            {/* Grid Matrix with Dot Dispersion */}
             <Card className="cyber-panel p-6 h-80 relative overflow-hidden">
               <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-yellow px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
-                <span className="text-xs font-mono text-cyber-yellow">GLOBAL.NETWORK</span>
+                <span className="text-xs font-mono text-cyber-yellow">NETWORK.PROPAGATION</span>
               </div>
 
               <div className="relative h-full mt-4">
-                <WorldMap />
+                {/* Grid background */}
+                <div className="absolute inset-0 opacity-20"
+                     style={{
+                       backgroundImage: `
+                         linear-gradient(rgba(0, 191, 255, 0.5) 1px, transparent 1px),
+                         linear-gradient(90deg, rgba(0, 191, 255, 0.5) 1px, transparent 1px)
+                       `,
+                       backgroundSize: '20px 20px'
+                     }} />
+
+                {/* Animated data points */}
+                {[...Array(50)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      backgroundColor: Math.random() > 0.5 ? '#ffd700' : '#00bfff',
+                      animationDelay: `${Math.random() * 2}s`
+                    }}
+                  >
+                    <div className="w-full h-full rounded-full animate-ping opacity-75" />
+                  </div>
+                ))}
+
+                {/* Propagation waves */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-32 h-32 border border-cyber-yellow rounded-full animate-ping opacity-30" />
+                  <div className="absolute w-24 h-24 border border-cyber-blue rounded-full animate-ping opacity-50" 
+                       style={{ animationDelay: '0.5s' }} />
+                  <div className="absolute w-16 h-16 border border-cyber-yellow rounded-full animate-ping opacity-70" 
+                       style={{ animationDelay: '1s' }} />
+                </div>
               </div>
             </Card>
           </div>

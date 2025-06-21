@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import DataPanels from '@/components/DataPanels';
 import TokenomicsSection from '@/components/TokenomicsSection';
 import RoadmapSection from '@/components/RoadmapSection';
 import MapSection from '@/components/MapSection';
+import TerminalSection from '@/components/TerminalSection';
 import Navigation from '@/components/Navigation';
 
 const Index = () => {
@@ -88,6 +90,9 @@ const Index = () => {
 
       {/* Map Section */}
       <MapSection />
+
+      {/* Terminal Section */}
+      <TerminalSection />
 
       {/* Enhanced Footer */}
       <footer className="relative z-10 border-t border-cyber-blue/20 bg-cyber-dark/90 backdrop-blur-sm">
