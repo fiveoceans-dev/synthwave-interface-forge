@@ -2,15 +2,6 @@
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
 import { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
-// Fix for default markers in React-Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
 const WorldMap = () => {
   const [nodes, setNodes] = useState([
@@ -55,6 +46,7 @@ const WorldMap = () => {
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          className="opacity-30"
         />
         
         {nodes.map((node) => {
@@ -65,15 +57,15 @@ const WorldMap = () => {
             <CircleMarker
               key={node.id}
               center={[node.lat, node.lng]}
+              radius={8 * pulseScale}
               pathOptions={{
                 color: color,
                 fillColor: color,
                 fillOpacity: opacity * 0.6,
                 weight: 2,
-                radius: 8 * pulseScale,
               }}
             >
-              <Popup>
+              <Popup className="cyber-panel">
                 <div className="bg-cyber-dark p-2 border border-cyber-blue rounded">
                   <div className="text-cyber-yellow font-mono text-sm">{node.city}</div>
                   <div className="text-cyber-blue font-mono text-xs">Activity: {node.activity.toFixed(0)}%</div>
