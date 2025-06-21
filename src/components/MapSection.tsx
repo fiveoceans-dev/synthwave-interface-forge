@@ -1,6 +1,7 @@
 
 import { Card } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
+import WorldMap from './WorldMap';
 
 const MapSection = () => {
   const [animationPhase, setAnimationPhase] = useState(0);
@@ -37,7 +38,6 @@ const MapSection = () => {
     return (
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="transform -rotate-90">
-          {/* Background ring */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -46,7 +46,6 @@ const MapSection = () => {
             strokeWidth={strokeWidth}
             fill="none"
           />
-          {/* Progress ring */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -59,7 +58,6 @@ const MapSection = () => {
             strokeLinecap="round"
             className="transition-all duration-1000"
           />
-          {/* Segmented markers */}
           {[...Array(12)].map((_, i) => (
             <circle
               key={i}
@@ -94,14 +92,12 @@ const MapSection = () => {
           {/* Circuit Sidebar - Left Panel */}
           <div className="col-span-2 space-y-2">
             <Card className="cyber-panel p-4 h-full relative overflow-hidden">
-              {/* Tab */}
               <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-yellow px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
                 <span className="text-xs font-mono text-cyber-yellow">CIRCUIT.MAP</span>
               </div>
 
               <div className="mt-4 space-y-3">
-                {/* Circuit pattern */}
                 {regions.map((region, index) => (
                   <div key={region.name} className="flex items-center space-x-2">
                     <div className={`w-3 h-3 border-2 ${
@@ -111,13 +107,11 @@ const MapSection = () => {
                     } ${animationPhase === index ? 'animate-pulse' : ''}`}
                          style={{clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'}} />
                     
-                    {/* Circuit lines */}
                     <div className="flex-1 h-px bg-gradient-to-r from-cyber-blue to-transparent" />
                     <div className="w-2 h-2 bg-cyber-yellow rounded-full opacity-60" />
                   </div>
                 ))}
 
-                {/* Status LEDs */}
                 <div className="mt-6 space-y-2">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-cyber-blue">PWR</span>
@@ -136,9 +130,8 @@ const MapSection = () => {
             </Card>
           </div>
 
-          {/* Main Network Visualization */}
+          {/* Main Network Visualization with World Map */}
           <div className="col-span-7 space-y-4">
-            {/* Top circular data rings */}
             <div className="grid grid-cols-2 gap-4 h-48">
               <Card className="cyber-panel p-4 relative overflow-hidden">
                 <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-blue px-3 py-1"
@@ -173,55 +166,21 @@ const MapSection = () => {
               </Card>
             </div>
 
-            {/* Grid Matrix with Dot Dispersion */}
+            {/* World Map with Network Propagation */}
             <Card className="cyber-panel p-6 h-80 relative overflow-hidden">
               <div className="absolute -top-3 left-6 bg-cyber-dark border border-cyber-yellow px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
-                <span className="text-xs font-mono text-cyber-yellow">NETWORK.PROPAGATION</span>
+                <span className="text-xs font-mono text-cyber-yellow">GLOBAL.NETWORK</span>
               </div>
 
               <div className="relative h-full mt-4">
-                {/* Grid background */}
-                <div className="absolute inset-0 opacity-20"
-                     style={{
-                       backgroundImage: `
-                         linear-gradient(rgba(0, 191, 255, 0.5) 1px, transparent 1px),
-                         linear-gradient(90deg, rgba(0, 191, 255, 0.5) 1px, transparent 1px)
-                       `,
-                       backgroundSize: '20px 20px'
-                     }} />
-
-                {/* Animated data points */}
-                {[...Array(50)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-1 h-1 rounded-full"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                      backgroundColor: Math.random() > 0.5 ? '#ffd700' : '#00bfff',
-                      animationDelay: `${Math.random() * 2}s`
-                    }}
-                  >
-                    <div className="w-full h-full rounded-full animate-ping opacity-75" />
-                  </div>
-                ))}
-
-                {/* Propagation waves */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 border border-cyber-yellow rounded-full animate-ping opacity-30" />
-                  <div className="absolute w-24 h-24 border border-cyber-blue rounded-full animate-ping opacity-50" 
-                       style={{ animationDelay: '0.5s' }} />
-                  <div className="absolute w-16 h-16 border border-cyber-yellow rounded-full animate-ping opacity-70" 
-                       style={{ animationDelay: '1s' }} />
-                </div>
+                <WorldMap />
               </div>
             </Card>
           </div>
 
           {/* Right Control Panel */}
           <div className="col-span-3 space-y-4">
-            {/* System metrics with sliders */}
             <Card className="cyber-panel p-4 relative overflow-hidden">
               <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-blue px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
@@ -236,20 +195,17 @@ const MapSection = () => {
                       <span className="text-cyber-yellow">{metric.value}{metric.unit}</span>
                     </div>
                     
-                    {/* Slider track */}
                     <div className="relative h-6 bg-cyber-black border border-cyber-blue/30">
                       <div 
                         className="h-full bg-gradient-to-r from-cyber-yellow to-cyber-blue transition-all duration-1000"
                         style={{ width: `${(metric.value / metric.max) * 100}%` }}
                       />
                       
-                      {/* Slider handle */}
                       <div 
                         className="absolute top-0 w-1 h-6 bg-cyber-yellow shadow-lg shadow-cyber-yellow/50"
                         style={{ left: `${(metric.value / metric.max) * 100}%` }}
                       />
                       
-                      {/* Tick marks */}
                       {[...Array(5)].map((_, i) => (
                         <div
                           key={i}
@@ -263,7 +219,6 @@ const MapSection = () => {
               </div>
             </Card>
 
-            {/* Connection health ring */}
             <Card className="cyber-panel p-4 relative overflow-hidden">
               <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-yellow px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
@@ -280,7 +235,6 @@ const MapSection = () => {
               </div>
             </Card>
 
-            {/* Network status indicators */}
             <Card className="cyber-panel p-4 relative overflow-hidden">
               <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-blue px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
@@ -309,7 +263,6 @@ const MapSection = () => {
           </div>
         </div>
 
-        {/* Bottom frame with timestamps and reference points */}
         <div className="mt-8 relative">
           <div className="flex justify-between items-center text-xs font-mono text-cyber-blue/70">
             <span>TIMESTAMP: 2087.12.19.14:32:07</span>
@@ -317,7 +270,6 @@ const MapSection = () => {
             <span>GRID.REF: 0xFF4A2B</span>
           </div>
           
-          {/* Decorative circuit notches */}
           <div className="absolute -top-2 left-0 w-8 h-1 bg-cyber-yellow opacity-60" />
           <div className="absolute -top-2 right-0 w-8 h-1 bg-cyber-blue opacity-60" />
           <div className="absolute -top-1 left-12 w-4 h-px bg-cyber-yellow opacity-40" />

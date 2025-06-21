@@ -1,9 +1,12 @@
 
 import { Card } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
+import { Icon } from '@blueprintjs/core';
 
 const TokenomicsSection = () => {
   const [animationPhase, setAnimationPhase] = useState(0);
+  const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
+  const [hoveredSegment, setHoveredSegment] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -13,12 +16,12 @@ const TokenomicsSection = () => {
   }, []);
 
   const tokenData = [
-    { label: 'LIQUIDITY.POOL', value: '400,000,000', percent: 40, color: '#ffd700' },
-    { label: 'DEVELOPMENT', value: '200,000,000', percent: 20, color: '#00bfff' },
-    { label: 'MARKETING', value: '150,000,000', percent: 15, color: '#ffd700' },
-    { label: 'TEAM.RESERVE', value: '100,000,000', percent: 10, color: '#00bfff' },
-    { label: 'PARTNERSHIPS', value: '100,000,000', percent: 10, color: '#ffd700' },
-    { label: 'AIRDROPS', value: '50,000,000', percent: 5, color: '#00bfff' }
+    { label: 'LIQUIDITY.POOL', value: '400,000,000', percent: 40, color: '#ffd700', icon: 'oil-field' },
+    { label: 'DEVELOPMENT', value: '200,000,000', percent: 20, color: '#00bfff', icon: 'build' },
+    { label: 'MARKETING', value: '150,000,000', percent: 15, color: '#ffd700', icon: 'megaphone' },
+    { label: 'TEAM.RESERVE', value: '100,000,000', percent: 10, color: '#00bfff', icon: 'people' },
+    { label: 'PARTNERSHIPS', value: '100,000,000', percent: 10, color: '#ffd700', icon: 'handshake' },
+    { label: 'AIRDROPS', value: '50,000,000', percent: 5, color: '#00bfff', icon: 'send-to' }
   ];
 
   const AnimatedPieChart = () => {
@@ -26,7 +29,6 @@ const TokenomicsSection = () => {
     
     return (
       <div className="relative w-64 h-64 mx-auto">
-        {/* Hologram base */}
         <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-72 h-8 bg-gradient-to-r from-transparent via-cyber-blue/20 to-transparent rounded-full blur-sm" />
         
         <svg className="w-full h-full transform rotate-90" viewBox="0 0 200 200">
@@ -40,7 +42,6 @@ const TokenomicsSection = () => {
             </filter>
           </defs>
           
-          {/* Background circle */}
           <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(0,191,255,0.1)" strokeWidth="4"/>
           
           {tokenData.map((segment, index) => {
@@ -60,6 +61,8 @@ const TokenomicsSection = () => {
               'Z'
             ].join(' ');
             
+            const isHighlighted = hoveredSegment === index || selectedSegment === index;
+            
             cumulativePercent += segment.percent;
             
             return (
@@ -67,18 +70,20 @@ const TokenomicsSection = () => {
                 <path
                   d={pathData}
                   fill={segment.color}
-                  fillOpacity="0.7"
+                  fillOpacity={isHighlighted ? "0.9" : "0.7"}
                   stroke="rgba(0,0,0,0.2)"
                   strokeWidth="1"
                   filter="url(#glow)"
-                  className="hover:fill-opacity-90 transition-all duration-300"
+                  className="cursor-pointer transition-all duration-300"
                   style={{
-                    transform: `scale(${1 + 0.05 * Math.sin((animationPhase + index * 60) * Math.PI / 180)})`,
+                    transform: `scale(${isHighlighted ? 1.05 : 1 + 0.02 * Math.sin((animationPhase + index * 60) * Math.PI / 180)})`,
                     transformOrigin: '100px 100px'
                   }}
+                  onMouseEnter={() => setHoveredSegment(index)}
+                  onMouseLeave={() => setHoveredSegment(null)}
+                  onClick={() => setSelectedSegment(selectedSegment === index ? null : index)}
                 />
                 
-                {/* Segment labels */}
                 <text
                   x={100 + 50 * Math.cos(((startAngle + endAngle) / 2 - 90) * Math.PI / 180)}
                   y={100 + 50 * Math.sin(((startAngle + endAngle) / 2 - 90) * Math.PI / 180)}
@@ -96,13 +101,11 @@ const TokenomicsSection = () => {
             );
           })}
           
-          {/* Center circle */}
           <circle cx="100" cy="100" r="25" fill="rgba(10,10,10,0.9)" stroke="#ffd700" strokeWidth="2"/>
           <text x="100" y="95" textAnchor="middle" fill="#ffd700" fontSize="10" fontFamily="monospace">TOTAL</text>
           <text x="100" y="105" textAnchor="middle" fill="#00bfff" fontSize="8" fontFamily="monospace">1B NMTL</text>
         </svg>
 
-        {/* Rotating outer ring */}
         <div className="absolute inset-0 border-2 border-cyber-blue/20 rounded-full animate-spin" style={{animationDuration: '30s'}} />
       </div>
     );
@@ -116,16 +119,13 @@ const TokenomicsSection = () => {
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Animated Token Distribution Chart */}
           <div className="relative">
             <Card className="cyber-panel p-8 relative overflow-hidden">
-              {/* Corner clips and segments */}
               <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-cyber-yellow" 
                    style={{clipPath: 'polygon(0 0, 100% 0, 75% 100%, 0 100%)'}} />
               <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-cyber-yellow"
                    style={{clipPath: 'polygon(25% 0, 100% 0, 100% 100%, 0 100%)'}} />
               
-              {/* Tab label */}
               <div className="absolute -top-3 left-4 bg-cyber-dark border border-cyber-yellow px-4 py-1"
                    style={{clipPath: 'polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)'}}>
                 <span className="text-xs font-mono text-cyber-yellow">DISTRIBUTION</span>
@@ -135,7 +135,6 @@ const TokenomicsSection = () => {
               
               <AnimatedPieChart />
 
-              {/* Decorative elements */}
               <div className="absolute top-1/2 left-0 w-2 h-8 bg-cyber-yellow opacity-50" 
                    style={{clipPath: 'polygon(0 0, 100% 25%, 100% 75%, 0 100%)'}} />
               <div className="absolute top-1/2 right-0 w-2 h-8 bg-cyber-blue opacity-50"
@@ -143,16 +142,25 @@ const TokenomicsSection = () => {
             </Card>
           </div>
 
-          {/* Token Details with enhanced styling */}
           <div className="space-y-4">
             {tokenData.map((item, index) => (
-              <Card key={item.label} className="cyber-panel cyber-border p-4 relative hover:ring ring-cyan-400/20 transition-all duration-300">
+              <Card 
+                key={item.label} 
+                className={`cyber-panel cyber-border p-4 relative transition-all duration-300 cursor-pointer ${
+                  selectedSegment === index ? 'ring-2 ring-cyber-yellow' : 'hover:ring ring-cyan-400/20'
+                }`}
+                onClick={() => setSelectedSegment(selectedSegment === index ? null : index)}
+                onMouseEnter={() => setHoveredSegment(index)}
+                onMouseLeave={() => setHoveredSegment(null)}
+              >
                 <div className="absolute inset-0 border border-cyber-blue/30 m-1"
                      style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}} />
                 
                 <div className="flex justify-between items-center relative z-10">
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 rounded-full" style={{backgroundColor: item.color}} />
+                    <div className="w-8 h-8 flex items-center justify-center rounded" style={{backgroundColor: item.color + '20', border: `1px solid ${item.color}`}}>
+                      <Icon icon={item.icon as any} size={16} color={item.color} />
+                    </div>
                     <span className="text-cyber-blue font-mono text-sm tracking-wider">{item.label}</span>
                   </div>
                   <div className="text-right">
@@ -161,12 +169,11 @@ const TokenomicsSection = () => {
                   </div>
                 </div>
 
-                {/* Enhanced progress bar */}
                 <div className="mt-3 h-2 bg-cyber-dark border border-cyber-blue/30 overflow-hidden relative">
                   <div 
                     className="h-full transition-all duration-1000 relative overflow-hidden"
                     style={{ 
-                      width: `${item.percent * 10}%`,
+                      width: `${selectedSegment === index ? 100 : item.percent * 10}%`,
                       backgroundColor: item.color,
                       boxShadow: `0 0 10px ${item.color}40`
                     }}
@@ -175,8 +182,13 @@ const TokenomicsSection = () => {
                   </div>
                 </div>
 
-                {/* Accent overlay */}
                 <div className="absolute top-0 right-4 w-8 h-1 opacity-70" style={{backgroundColor: item.color}} />
+                
+                {selectedSegment === index && (
+                  <div className="mt-3 text-xs font-mono text-cyber-blue/70 animate-fadeIn">
+                    Click to highlight this segment in the chart
+                  </div>
+                )}
               </Card>
             ))}
           </div>

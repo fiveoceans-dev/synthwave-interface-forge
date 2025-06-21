@@ -1,9 +1,12 @@
 
 import { Card } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
+import { Icon } from '@blueprintjs/core';
 
 const RoadmapSection = () => {
   const [animationProgress, setAnimationProgress] = useState(0);
+  const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
+  const [hoveredPhase, setHoveredPhase] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -17,7 +20,7 @@ const RoadmapSection = () => {
       phase: 'PHASE.01',
       title: 'FOUNDATION',
       status: 'COMPLETE',
-      icon: '🚀',
+      icon: 'rocket-slant',
       items: [
         'Smart Contract Development',
         'Security Audit & Testing',
@@ -29,7 +32,7 @@ const RoadmapSection = () => {
       phase: 'PHASE.02', 
       title: 'EXPANSION',
       status: 'ACTIVE',
-      icon: '⚡',
+      icon: 'lightning',
       items: [
         'DEX Listing & Liquidity',
         'Marketing Campaign',
@@ -41,7 +44,7 @@ const RoadmapSection = () => {
       phase: 'PHASE.03',
       title: 'INTEGRATION',
       status: 'PENDING',
-      icon: '🛠',
+      icon: 'build',
       items: [
         'CEX Listings',
         'Mobile App Development',
@@ -53,7 +56,7 @@ const RoadmapSection = () => {
       phase: 'PHASE.04',
       title: 'ECOSYSTEM',
       status: 'FUTURE',
-      icon: '🌐',
+      icon: 'globe-network',
       items: [
         'DAO Governance',
         'Metal Processing DeFi',
@@ -90,7 +93,6 @@ const RoadmapSection = () => {
           </filter>
         </defs>
         
-        {/* Main timeline */}
         <line 
           x1="50" 
           y1="50" 
@@ -101,7 +103,6 @@ const RoadmapSection = () => {
           filter="url(#timelineGlow)"
         />
         
-        {/* Segmented progress line */}
         <line 
           x1="50" 
           y1="50" 
@@ -113,26 +114,28 @@ const RoadmapSection = () => {
           className="animate-pulse"
         />
 
-        {/* Milestone nodes */}
         {roadmapData.map((milestone, index) => {
           const x = 50 + (index * 175);
-          const isActive = index <= 1; // First two phases are active/complete
+          const isActive = index <= 1;
+          const isHovered = hoveredPhase === index;
+          const isSelected = selectedPhase === index;
           
           return (
             <g key={index}>
-              {/* Node circle */}
               <circle
                 cx={x}
                 cy="50"
-                r="12"
+                r={isHovered || isSelected ? "15" : "12"}
                 fill={isActive ? "#ffd700" : "rgba(0,191,255,0.3)"}
                 stroke={isActive ? "#00bfff" : "#ffd700"}
                 strokeWidth="2"
                 filter="url(#timelineGlow)"
-                className={isActive ? "animate-pulse" : ""}
+                className={`cursor-pointer transition-all duration-300 ${isActive ? "animate-pulse" : ""}`}
+                onClick={() => setSelectedPhase(selectedPhase === index ? null : index)}
+                onMouseEnter={() => setHoveredPhase(index)}
+                onMouseLeave={() => setHoveredPhase(null)}
               />
               
-              {/* Inner node */}
               <circle
                 cx={x}
                 cy="50"
@@ -142,18 +145,6 @@ const RoadmapSection = () => {
                 style={{ animationDelay: `${index * 0.5}s` }}
               />
               
-              {/* Icon */}
-              <text
-                x={x}
-                y="35"
-                textAnchor="middle"
-                fontSize="16"
-                className="pointer-events-none"
-              >
-                {milestone.icon}
-              </text>
-              
-              {/* Phase label */}
               <text
                 x={x}
                 y="75"
@@ -169,7 +160,6 @@ const RoadmapSection = () => {
           );
         })}
         
-        {/* Floating particles along timeline */}
         {Array.from({ length: 8 }).map((_, i) => (
           <circle
             key={i}
@@ -192,28 +182,38 @@ const RoadmapSection = () => {
           METAL.ROADMAP
         </h2>
 
-        {/* Animated Timeline */}
         <TimelineSVG />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {roadmapData.map((phase, index) => (
-            <Card key={phase.phase} className="cyber-panel cyber-border p-6 relative overflow-hidden hover:ring ring-cyan-400/20 transition-all duration-300">
-              {/* Enhanced corner clips */}
+            <Card 
+              key={phase.phase} 
+              className={`cyber-panel cyber-border p-6 relative overflow-hidden transition-all duration-300 cursor-pointer ${
+                selectedPhase === index ? 'ring-2 ring-cyber-yellow scale-105' : 'hover:ring ring-cyan-400/20'
+              }`}
+              onClick={() => setSelectedPhase(selectedPhase === index ? null : index)}
+              onMouseEnter={() => setHoveredPhase(index)}
+              onMouseLeave={() => setHoveredPhase(null)}
+            >
               <div className="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-cyber-yellow"
                    style={{clipPath: 'polygon(0 0, 70% 0, 100% 30%, 100% 100%, 0 100%)'}} />
               <div className="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 border-cyber-blue"
                    style={{clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0 100%, 0 30%)'}} />
               
-              {/* Enhanced tab with phase */}
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-cyber-dark border border-cyber-yellow px-3 py-1"
                    style={{clipPath: 'polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)'}}>
                 <span className="text-xs font-mono text-cyber-yellow">{phase.phase}</span>
               </div>
 
               <div className="mt-4">
-                {/* Icon and title */}
                 <div className="flex items-center justify-center mb-3">
-                  <span className="text-2xl mr-2">{phase.icon}</span>
+                  <div className="w-8 h-8 flex items-center justify-center mr-2">
+                    <Icon 
+                      icon={phase.icon as any} 
+                      size={24} 
+                      color={selectedPhase === index ? "#ffd700" : "#00bfff"} 
+                    />
+                  </div>
                   <h3 className="text-cyber-yellow font-cyber text-lg tracking-widest">{phase.title}</h3>
                 </div>
                 
@@ -221,7 +221,9 @@ const RoadmapSection = () => {
                   STATUS: {phase.status}
                 </div>
 
-                <div className="space-y-3">
+                <div className={`space-y-3 transition-all duration-300 ${
+                  selectedPhase === index ? 'max-h-96 opacity-100' : 'max-h-32 opacity-75'
+                }`}>
                   {phase.items.map((item, itemIndex) => (
                     <div key={itemIndex} className="flex items-start space-x-2">
                       <div className="w-2 h-2 mt-2 bg-cyber-blue"
@@ -229,10 +231,17 @@ const RoadmapSection = () => {
                       <span className="text-cyber-blue/80 text-sm font-mono leading-relaxed">{item}</span>
                     </div>
                   ))}
+                  
+                  {selectedPhase === index && (
+                    <div className="mt-4 p-3 bg-cyber-dark/50 border border-cyber-blue/30 rounded animate-fadeIn">
+                      <div className="text-xs font-mono text-cyber-yellow">
+                        PHASE.DETAILS: Click timeline node to interact
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Enhanced segmented border */}
               <div className="absolute bottom-0 left-4 right-4 h-px">
                 <div className="flex space-x-2">
                   <div className="flex-1 h-px bg-cyber-yellow" />
@@ -243,11 +252,9 @@ const RoadmapSection = () => {
                 </div>
               </div>
 
-              {/* Enhanced accent overlays */}
               <div className="absolute top-6 right-2 w-1 h-8 bg-cyber-yellow opacity-60"
                    style={{clipPath: 'polygon(0 0, 100% 20%, 100% 80%, 0 100%)'}} />
               
-              {/* Progress indicator */}
               <div className={`absolute top-2 left-2 w-2 h-2 rounded-full ${
                 phase.status === 'COMPLETE' ? 'bg-cyber-yellow animate-pulse' :
                 phase.status === 'ACTIVE' ? 'bg-cyber-blue animate-ping' :
