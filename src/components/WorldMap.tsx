@@ -38,7 +38,7 @@ const WorldMap = () => {
   return (
     <div className="h-full w-full relative">
       <MapContainer
-        center={[20, 0]}
+        center={[20, 0] as [number, number]}
         zoom={2}
         style={{ height: '100%', width: '100%', backgroundColor: '#0a0a0a' }}
         attributionControl={false}
@@ -46,7 +46,6 @@ const WorldMap = () => {
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          className="opacity-30"
         />
         
         {nodes.map((node) => {
@@ -56,16 +55,16 @@ const WorldMap = () => {
           return (
             <CircleMarker
               key={node.id}
-              center={[node.lat, node.lng]}
-              radius={8 * pulseScale}
+              center={[node.lat, node.lng] as [number, number]}
               pathOptions={{
                 color: color,
                 fillColor: color,
                 fillOpacity: opacity * 0.6,
                 weight: 2,
+                radius: 8 * pulseScale,
               }}
             >
-              <Popup className="cyber-panel">
+              <Popup>
                 <div className="bg-cyber-dark p-2 border border-cyber-blue rounded">
                   <div className="text-cyber-yellow font-mono text-sm">{node.city}</div>
                   <div className="text-cyber-blue font-mono text-xs">Activity: {node.activity.toFixed(0)}%</div>
